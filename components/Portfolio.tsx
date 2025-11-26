@@ -78,10 +78,14 @@ const Portfolio: React.FC = () => {
           ))}
         </div>
         
-        <div className="text-center mt-12">
-            <a href="#" className="group inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors px-6 py-3 border border-white/10 rounded-full hover:bg-white/5">
+        <div className="flex flex-col items-center gap-8 mt-16">
+            <a href="#" className="group inline-flex items-center gap-2 text-gray-500 hover:text-white transition-colors text-sm font-medium uppercase tracking-widest">
                 <span>Смотреть все работы</span>
                 <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+            </a>
+
+            <a href="mailto:vlad@motionthis.com" className="px-12 py-4 bg-motion-blue text-white font-display font-bold text-xl rounded-full hover:bg-blue-600 transition-all transform hover:scale-105 shadow-[0_0_30px_rgba(0,163,255,0.3)] hover:shadow-[0_0_50px_rgba(0,163,255,0.5)]">
+                Нанять меня
             </a>
         </div>
       </div>
