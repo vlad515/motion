@@ -19,11 +19,10 @@ const About: React.FC = () => {
               Привет, я <span className="gradient-text">Влад</span>.
             </h2>
             <p className="text-gray-300 text-lg leading-relaxed">
-              Я создаю движение на экране и в жизни. Веду канал <b>Motion This</b>, где делюсь инсайтами индустрии, генерирую безумные вещи в нейросетях и рассказываю, как живется человеку, который видит поверх холодильника.
+              Я создаю движение на экране и в жизни. Веду канал <b>Motion This</b>, где делюсь инсайтами индустрии, генерирую безумные вещи в нейросетях и показываю закулисье жизни моушен-дизайнера.
             </p>
             
-            <div className="grid grid-cols-2 gap-4">
-              <StatCard number="2.00м" label="Рост" subtext="Вид сверху лучше" />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <StatCard number="32" label="Года" subtext="В самом расцвете сил" />
               <StatCard number="∞" label="Котиков" subtext="Укротитель со стажем" />
               <StatCard number="0" label="Жен" subtext="Вакансия открыта" />
@@ -42,15 +41,15 @@ const About: React.FC = () => {
           <div className="order-1 md:order-2 relative h-[500px] w-full bg-gradient-to-br from-gray-900 to-black rounded-3xl border border-white/10 overflow-hidden flex items-end justify-center group">
              {/* Abstract Representation of Vlad */}
              <div className="absolute top-10 right-10 text-right opacity-50">
-                <div className="text-6xl font-display font-bold">2M</div>
-                <div className="text-sm">HEIGHT LIMIT</div>
+                <div className="text-6xl font-display font-bold">VLAD</div>
+                <div className="text-sm">VERSION 1.0</div>
              </div>
              
              {/* Silhouette / Graphic */}
              <div className="w-1/3 h-[90%] bg-white/10 rounded-t-full relative backdrop-blur-sm group-hover:h-[95%] transition-all duration-500 ease-out">
                 <div className="absolute top-1/4 left-1/2 transform -translate-x-1/2 w-20 h-2 bg-motion-blue/50 blur-md"></div>
                 <div className="absolute bottom-10 left-0 w-full text-center text-xs text-gray-500 font-mono">
-                   MODEL: VLAD_V1
+                   MODEL: VLAD_MAIN
                 </div>
              </div>
              

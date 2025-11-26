@@ -16,6 +16,6 @@ export enum Section {
   HERO = 'hero',
   ABOUT = 'about',
   FEED = 'feed',
+  PORTFOLIO = 'portfolio',
   CHAT = 'chat',
-  CATS = 'cats',
 }

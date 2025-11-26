@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Hero from './components/Hero';
 import About from './components/About';
 import ChatInterface from './components/ChatInterface';
-import CatGallery from './components/CatGallery';
 import TelegramFeed from './components/TelegramFeed';
+import Portfolio from './components/Portfolio';
 
 const App: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -27,8 +27,8 @@ const App: React.FC = () => {
           <div className="hidden md:flex gap-8 text-sm font-medium text-gray-300">
             <a href="#about" className="hover:text-white transition-colors">Обо мне</a>
             <a href="#feed" className="hover:text-white transition-colors">Блог</a>
+            <a href="#portfolio" className="hover:text-white transition-colors">Портфолио</a>
             <a href="#chat" className="hover:text-motion-blue transition-colors">AI Чат</a>
-            <a href="#cats" className="hover:text-white transition-colors">Котики</a>
           </div>
           <a 
             href="https://t.me/Motion_This"
@@ -46,8 +46,8 @@ const App: React.FC = () => {
         <Hero />
         <About />
         <TelegramFeed />
+        <Portfolio />
         <ChatInterface />
-        <CatGallery />
       </main>
 
       {/* Footer */}

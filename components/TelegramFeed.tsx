@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
 interface TelegramPost {
   id: string;
@@ -11,23 +11,72 @@ interface TelegramPost {
 
 const TelegramFeed: React.FC = () => {
   const [posts, setPosts] = useState<TelegramPost[]>([]);
+  const [subscribers, setSubscribers] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  
+  // Animation state
+  const [isVisible, setIsVisible] = useState(false);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+
+  useEffect(() => {
+    // Intersection Observer for animation
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect(); // Animate only once
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (titleRef.current) {
+      observer.observe(titleRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const fetchPosts = async () => {
+      const CHANNEL_URL = 'https://t.me/s/motion_this';
+      let htmlContent = '';
+
+      // Strategy: Try primary proxy, if fail, try fallback
       try {
-        // Use AllOrigins as a CORS proxy to fetch the public Telegram web view
-        const response = await fetch(
-          `https://api.allorigins.win/get?url=${encodeURIComponent('https://t.me/s/motion_this')}&t=${Date.now()}`
-        );
-        const data = await response.json();
-        
-        if (!data.contents) throw new Error('No content received');
+        // 1. Try AllOrigins (Returns JSON with contents)
+        try {
+          const response = await fetch(
+            `https://api.allorigins.win/get?url=${encodeURIComponent(CHANNEL_URL)}&t=${Date.now()}`
+          );
+          if (!response.ok) throw new Error('AllOrigins response not ok');
+          const data = await response.json();
+          if (!data.contents) throw new Error('AllOrigins no content');
+          htmlContent = data.contents;
+        } catch (primaryError) {
+          console.warn('Primary proxy failed, switching to fallback...', primaryError);
+          
+          // 2. Try CodeTabs (Returns raw HTML)
+          const response = await fetch(
+            `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(CHANNEL_URL)}`
+          );
+          if (!response.ok) throw new Error('Backup proxy failed');
+          htmlContent = await response.text();
+        }
+
+        if (!htmlContent) throw new Error('No content received from any proxy');
 
         // Parse the HTML
         const parser = new DOMParser();
-        const doc = parser.parseFromString(data.contents, 'text/html');
+        const doc = parser.parseFromString(htmlContent, 'text/html');
+
+        // Extract subscriber count
+        const counterEl = doc.querySelector('.tgme_header_counter') || doc.querySelector('.tgme_page_extra');
+        if (counterEl && counterEl.textContent) {
+          setSubscribers(counterEl.textContent.trim());
+        }
+
         const messageNodes = doc.querySelectorAll('.tgme_widget_message_wrap');
 
         const parsedPosts: TelegramPost[] = Array.from(messageNodes)
@@ -91,10 +140,26 @@ const TelegramFeed: React.FC = () => {
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
           <div>
-            <h2 className="text-3xl md:text-5xl font-display font-bold mb-2">
-              Live из <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">Telegram</span>
-            </h2>
-            <p className="text-gray-400">
+            <div className="flex items-center gap-3 mb-2">
+              <h2 
+                ref={titleRef}
+                className={`text-3xl md:text-5xl font-display font-bold transform transition-all duration-1000 ease-out ${
+                  isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+                }`}
+              >
+                Live из <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">Telegram</span>
+              </h2>
+              {subscribers && (
+                <div className={`inline-flex items-center gap-2 bg-white/10 px-3 py-1 rounded-full border border-white/10 backdrop-blur-sm transition-opacity duration-1000 delay-500 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-motion-blue opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-motion-blue"></span>
+                  </span>
+                  <span className="text-xs font-bold text-white tracking-wide">{subscribers}</span>
+                </div>
+              )}
+            </div>
+            <p className={`text-gray-400 transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
               Последние мысли, работы и новости канала
             </p>
           </div>
@@ -119,7 +184,7 @@ const TelegramFeed: React.FC = () => {
           </div>
         ) : error ? (
           <div className="text-center py-20 bg-white/5 rounded-2xl border border-white/10">
-            <p className="text-gray-400 mb-4">Не удалось загрузить ленту (возможно, VPN шалит)</p>
+            <p className="text-gray-400 mb-4">Не удалось загрузить ленту (проблемы с соединением)</p>
             <a 
               href="https://t.me/Motion_This" 
               className="text-motion-blue hover:underline"
